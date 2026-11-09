@@ -5,7 +5,7 @@ from psycopg2.extras import execute_values
 import pysus
 
 UFS = ["BA"]
-YEARS = [2021]
+YEARS = list(range(2015, 2023))
 
 UF_COD = {"11": "RO", "12": "AC", "13": "AM", "14": "RR", "15": "PA", "16": "AP",
           "17": "TO", "21": "MA", "22": "PI", "23": "CE", "24": "RN", "25": "PB",
@@ -24,9 +24,9 @@ def achar(nome):
 def ler(prefixo, uf, ano):
     nome = f"{prefixo}{uf}{ano}.parquet"
     if not achar(nome):
-        fonte = pysus.ftp.sim if prefixo == "DO" else pysus.ftp.sinasc
-        fonte(state=uf, year=ano).download()
-    df = pd.read_parquet(achar(nome))
+        fonte = pysus.sim if prefixo == "DO" else pysus.sinasc
+        fonte(state=uf, year=ano)
+    assert achar(nome), f"arquivo nao encontrado: {nome}"; df = pd.read_parquet(achar(nome))
     df.columns = [c.upper() for c in df.columns]
     return df
 
