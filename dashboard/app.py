@@ -72,14 +72,14 @@ por_raca = por_raca.sort_values("raca_cor")
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("1. Razão de mortalidade materna por raça/cor")
-    st.plotly_chart(px.bar(por_raca, x="raca_cor", y="razao", text="obitos",
+    st.plotly_chart(px.bar(por_raca[por_raca["raca_cor"] != "Ignorado"], x="raca_cor", y="razao", text="obitos",
                            labels={"razao": "Óbitos por 100 mil NV", "raca_cor": "Raça/cor"}),
                     width="stretch")
-    st.caption("O número sobre cada barra é o total de óbitos. Com poucos óbitos, a razão oscila muito.")
+    st.caption("O número sobre cada barra é o total de óbitos. Com poucos óbitos, a razão oscila muito. A categoria Ignorado não aparece aqui porque sua razão é instável.")
 with col2:
     st.subheader("2. Evolução anual da razão")
     evo = agrega(f, ["ano", "raca_cor"])
-    st.plotly_chart(px.line(evo, x="ano", y="razao", color="raca_cor", markers=True,
+    st.plotly_chart(px.line(evo[evo["raca_cor"] != "Ignorado"], x="ano", y="razao", color="raca_cor", markers=True,
                             category_orders={"raca_cor": ORDEM},
                             labels={"razao": "Óbitos por 100 mil NV", "ano": "Ano"}),
                     width="stretch")
@@ -99,3 +99,4 @@ with col4:
 
 st.subheader("Dados por UF")
 st.dataframe(agrega(f, ["uf", "raca_cor"]), width="stretch")
+
