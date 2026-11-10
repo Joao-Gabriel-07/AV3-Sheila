@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 import pysus
 
-UFS = ["BA"]
+UFS = ["BA", "SP", "PA", "RS"]
 YEARS = list(range(2015, 2023))
 
 UF_COD = {"11": "RO", "12": "AC", "13": "AM", "14": "RR", "15": "PA", "16": "AP",
