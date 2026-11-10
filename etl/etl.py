@@ -44,7 +44,12 @@ for uf in UFS:
     for ano in YEARS:
         ob = prep(ler("DO", uf, ano), "RACACOR")
         causa = ob["CAUSABAS"].astype(str).str[:3]
-        ob = ob[causa.str.startswith("O") & ~causa.isin(["O96", "O97"])]
+        g = ob["OBITOGRAV"].astype(str).str.strip()
+        pu = ob["OBITOPUERP"].astype(str).str.strip()
+        cap_o = causa.str.startswith("O") & ~causa.isin(["O96", "O97"])
+        outras = causa.isin(["A34", "F53"]) | ob["CAUSABAS"].astype(str).str[:4].isin(["D392", "E230", "M830"])
+        ciclo = (g == "1") | pu.isin(["1", "2"])
+        ob = ob[cap_o | (outras & ciclo)]
         agg_ob = ob.groupby(["UF", "RACA"]).size().reset_index(name="n")
 
         nv = prep(ler("DN", uf, ano), "RACACORMAE")
@@ -69,3 +74,4 @@ cur.execute("SELECT * FROM indicadores ORDER BY ano, uf, raca_cor")
 for linha in cur.fetchall():
     print(linha)
 conn.close()
+
