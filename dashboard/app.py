@@ -50,7 +50,7 @@ st.sidebar.header("Filtros")
 ufs = st.sidebar.multiselect("UF", sorted(df["uf"].unique()), default=sorted(df["uf"].unique()))
 anos = st.sidebar.slider("Período", int(df["ano"].min()), int(df["ano"].max()),
                          (int(df["ano"].min()), int(df["ano"].max())))
-racas = st.sidebar.multiselect("Raça/cor da mãe", ORDEM, default=ORDEM)
+racas = st.sidebar.multiselect("Raça/cor da mãe", [r for r in ORDEM if r != "Ignorado"], default=[r for r in ORDEM if r != "Ignorado"])
 
 f = df[df["uf"].isin(ufs) & df["ano"].between(*anos) & df["raca_cor"].isin(racas)]
 if f.empty:
@@ -62,7 +62,7 @@ c1, c2, c3, c4 = st.columns(4)
 c1.metric("Óbitos maternos", f"{int(tot['obitos']):,}".replace(",", "."))
 c2.metric("Nascidos vivos", f"{int(tot['nascidos']):,}".replace(",", "."))
 c3.metric("Razão geral (por 100 mil NV)", f"{tot['razao']:.1f}")
-ign = f[f["raca_cor"] == "Ignorado"]["nascidos"].sum() * 100 / f["nascidos"].sum()
+base = df[df["uf"].isin(ufs) & df["ano"].between(*anos)]; ign = base[base["raca_cor"] == "Ignorado"]["nascidos"].sum() * 100 / base["nascidos"].sum()
 c4.metric("Raça/cor ignorada (%)", f"{ign:.1f}")
 
 por_raca = agrega(f, "raca_cor")
@@ -99,4 +99,5 @@ with col4:
 
 st.subheader("Dados por UF")
 st.dataframe(agrega(f, ["uf", "raca_cor"]), width="stretch")
+
 
