@@ -50,7 +50,7 @@ st.sidebar.header("Filtros")
 ufs = st.sidebar.multiselect("UF", sorted(df["uf"].unique()), default=sorted(df["uf"].unique()))
 anos = st.sidebar.slider("Período", int(df["ano"].min()), int(df["ano"].max()),
                          (int(df["ano"].min()), int(df["ano"].max())))
-racas = st.sidebar.multiselect("Raça/cor da mãe", [r for r in ORDEM if r != "Ignorado"], default=[r for r in ORDEM if r != "Ignorado"])
+racas = st.sidebar.multiselect("Raça/cor da mãe", ORDEM, default=ORDEM)
 
 f = df[df["uf"].isin(ufs) & df["ano"].between(*anos) & df["raca_cor"].isin(racas)]
 if f.empty:
@@ -62,7 +62,7 @@ c1, c2, c3, c4 = st.columns(4)
 c1.metric("Óbitos maternos", f"{int(tot['obitos']):,}".replace(",", "."))
 c2.metric("Nascidos vivos", f"{int(tot['nascidos']):,}".replace(",", "."))
 c3.metric("Razão geral (por 100 mil NV)", f"{tot['razao']:.1f}")
-base = df[df["uf"].isin(ufs) & df["ano"].between(*anos)]; ign = base[base["raca_cor"] == "Ignorado"]["nascidos"].sum() * 100 / base["nascidos"].sum()
+ign = f[f["raca_cor"] == "Ignorado"]["nascidos"].sum() * 100 / f["nascidos"].sum()
 c4.metric("Raça/cor ignorada (%)", f"{ign:.1f}")
 
 por_raca = agrega(f, "raca_cor")
@@ -72,14 +72,14 @@ por_raca = por_raca.sort_values("raca_cor")
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("1. Razão de mortalidade materna por raça/cor")
-    st.plotly_chart(px.bar(por_raca[por_raca["raca_cor"] != "Ignorado"], x="raca_cor", y="razao", text="obitos",
+    st.plotly_chart(px.bar(por_raca, x="raca_cor", y="razao", text="obitos",
                            labels={"razao": "Óbitos por 100 mil NV", "raca_cor": "Raça/cor"}),
                     width="stretch")
-    st.caption("O número sobre cada barra é o total de óbitos. Com poucos óbitos, a razão oscila muito. A categoria Ignorado não aparece aqui porque sua razão é instável.")
+    st.caption("O número sobre cada barra é o total de óbitos. Com poucos óbitos, a razão oscila muito.")
 with col2:
     st.subheader("2. Evolução anual da razão")
     evo = agrega(f, ["ano", "raca_cor"])
-    st.plotly_chart(px.line(evo[evo["raca_cor"] != "Ignorado"], x="ano", y="razao", color="raca_cor", markers=True,
+    st.plotly_chart(px.line(evo, x="ano", y="razao", color="raca_cor", markers=True,
                             category_orders={"raca_cor": ORDEM},
                             labels={"razao": "Óbitos por 100 mil NV", "ano": "Ano"}),
                     width="stretch")
@@ -99,5 +99,3 @@ with col4:
 
 st.subheader("Dados por UF")
 st.dataframe(agrega(f, ["uf", "raca_cor"]), width="stretch")
-
-

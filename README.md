@@ -101,10 +101,11 @@ Segurança: nenhum token ou senha está no repositório. `.tfstate` e `.tfvars` 
 ## 7. Limitações
 
 - **Violência obstétrica não é medida diretamente.** SIM e SINASC não registram esse fenômeno; usamos indicadores indiretos (proporção de cesáreas e de pré-natal insuficiente por raça/cor).
-- **Raça/cor ignorada:** registros sem raça/cor informada não entram nos gráficos nem nos filtros, porque SIM e SINASC têm proporções diferentes de registros ignorados e a razão dessa categoria é instável. O dashboard mostra, à parte, o percentual de nascidos vivos com raça/cor ignorada no recorte escolhido. Por isso, os totais exibidos podem ser um pouco menores que os totais oficiais.
+- **Raça/cor ignorada** varia entre SIM e SINASC; por isso a razão da categoria "Ignorado" é instável e deve ser lida com cautela.
 - **Eventos raros:** com poucos óbitos por categoria, a razão oscila muito entre anos. O dashboard mostra o número absoluto de óbitos junto da razão.
 - **2022 é preliminar** no SIM.
 - Recorte de 4 UFs, para respeitar o limite de 1 GB e o tempo de carga.
+
 
 
 
